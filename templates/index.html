@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud File Storage</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header>
+        <h2>☁ CloudVault</h2>
+        <span>● Storage Ready</span>
+    </header>
+
+    <main>
+        <section class="welcome">
+            <p class="tag">YOUR PERSONAL STORAGE</p>
+            <h1>Cloud File Storage</h1>
+            <p>Upload, manage, and download your files easily.</p>
+        </section>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="card">
+            <h2>Upload a File</h2>
+            <p>Select a file from your computer (maximum 16 MB).</p>
+
+            <form action="{{ url_for('upload') }}"
+                  method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <button type="submit">Upload File</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <div class="heading">
+                <h2>Your Files</h2>
+                <span>{{ files|length }} files</span>
+            </div>
+
+            {% if files %}
+                {% for file in files %}
+                    <div class="file-row">
+                        <div class="file-details">
+                            <strong>📄 {{ file.name }}</strong>
+                            <small>{{ file.size }} KB</small>
+                        </div>
+
+                        <a class="download"
+                           href="{{ url_for('download',
+                                            filename=file.name) }}">
+                            Download
+                        </a>
+
+                        <form action="{{ url_for('delete',
+                                                filename=file.name) }}"
+                              method="POST"
+                              onsubmit="return confirm('Delete this file?');">
+                            <button class="delete" type="submit">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">
+                    <h3>No files uploaded yet</h3>
+                    <p>Upload your first file to see it here.</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <footer>CloudVault | Simple File Management</footer>
+    </main>
+
+</body>
+</html>
